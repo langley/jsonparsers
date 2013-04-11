@@ -1,0 +1,10 @@
+This project is exploring using Scala parser combinators to parse
+json. It started from code illustrated here: 
+     http://www.artima.com/pins1ed/combinator-parsing.html
+
+It is a simple SBT project created using the following steps:
+  1. g8 typesafehub/scala-sbt
+  2. adding the project/plugins.sbt containing the eclipse plugin. 
+
+Which allows us to use the "eclipse" command in sbt to create the
+eclipse project support. 
