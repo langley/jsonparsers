@@ -23,18 +23,11 @@ object ThirdJsonParser extends JSON3 with App {
 class JSON3 extends JavaTokenParsers {   
   def obj: Parser[JsonObject] = 
     "{"~> repsep(member, ",") <~"}" ^^ 
-        { case member => // Map() ++ member; 
-            val ret = new JsonObject(); 
-            member.foreach(e => ret.add(e._1, e._2))
-            ret 
-        }
+        { case member => member.foldLeft(new JsonObject){(r,e) => r.add(e._1, e._2); r} }
 
   def arr: Parser[JsonArray] =
     "["~> repsep(value, ",") <~"]" ^^ 
-       { case value => val ret = new JsonArray()
-         value.foreach(e => ret.add(e))
-         ret
-       } 
+       { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} } 
   
   def member: Parser[(String, JsonElement)] = 
     stringLiteral~":"~value ^^ 	// 
@@ -50,5 +43,6 @@ class JSON3 extends JavaTokenParsers {
     | "false" ^^ {case _ => new JsonPrimitive(new java.lang.Boolean(false))}
   ) // using '(' lets us use \n and avoid ';' for one statement
   
+  // Strip first and last quotes from input string
   def stripFirstAndLast(in: String): String = in.subSequence(1, in.length()-1).toString
 }
