@@ -10,8 +10,9 @@ object JsonparsersBuild extends Build {
       name := "jsonParsers",
       organization := "org.example",
       version := "0.1-SNAPSHOT",
-      scalaVersion := "2.10.1"
+      scalaVersion := "2.10.1",
       // add other settings here
+	  libraryDependencies += "com.google.code.gson" % "gson" % "1.5"
     )
   )
 }
