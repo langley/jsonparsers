@@ -1,5 +1,7 @@
 package org.example
 // From http://www.artima.com/pins1ed/combinator-parsing.html
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.parsing.combinator._
 import java.io.FileReader
 import com.google.gson._
@@ -22,13 +24,16 @@ object FourthJsonParser extends JSON4 with App {
 
 class JSON4 extends JavaTokenParsers {   
   
-//  def addressBook: Parser[JsonObject] = (
-//	name ~ "," ~ address ~ "," ~ phoneNumbers ^^ { 
-//	  case (name ~ "," ~ address ~ "," ~ phoneNumbers) => { 
-//	    List(name,address,phoneNumbers).foldLeft(new JsonObject){(r,e) => r.; r}
-//	  }
-//	}
-//  )
+  def addressBook: Parser[JsonObject] = (
+	name ~ "," ~ address ~ "," ~ phoneNumbers ^^ { 
+	  case (name ~ "," ~ address ~ "," ~ phoneNumbers) => { 
+	    List(name,address,phoneNumbers).foldLeft(new JsonObject){(r,e) => 
+	      e.getAsJsonObject().entrySet.asScala.foreach(e => r.add(e.getKey,e.getValue))
+	      r
+	    }
+	  }
+	}
+  )
   
   def name: Parser[JsonObject] = ( 
 	  member ^^ { 
