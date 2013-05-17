@@ -6,7 +6,7 @@ import scala.util.parsing.combinator._
 import java.io.FileReader
 import com.google.gson._
 
-object FourthJsonParser extends JSON4 with App {
+object FifthJsonParser extends JSON5 with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
@@ -23,7 +23,7 @@ object FourthJsonParser extends JSON4 with App {
 }
 
 
-class JSON4 extends JavaTokenParsers {   
+class JSON5 extends JavaTokenParsers {   
 
   case class ParsedElement(name: String, element: JsonElement)
   
@@ -35,8 +35,8 @@ class JSON4 extends JavaTokenParsers {
 	}
   }
   def name: Parser[ParsedElement] = {
-    "\"name\""~":"~value ^^ 	// 
-      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }  
+    "\"name\"" ~ ":" ~ stringValue ^^ 	
+      { case name ~ ":" ~ value => ParsedElement(stripQuotes(name),value) }  
   }
   def address: Parser[ParsedElement] = {
       "\"address\"" ~> ":" ~> "{" ~> street ~ "," ~ city ~ "," ~ zip <~ "}" ^^ {
@@ -45,40 +45,52 @@ class JSON4 extends JavaTokenParsers {
       }
   }
   def street: Parser[ParsedElement] = {
-    "\"street\""~":"~value ^^ 	
-      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+    "\"street\"" ~ ":" ~ stringValue ^^ 	
+      { case name~":"~value => ParsedElement(stripQuotes(name),value) }
   }
   def city: Parser[ParsedElement] = {
-    "\"city\""~":"~value ^^ 	
-      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+    "\"city\"" ~ ":" ~ stringValue ^^ 	
+      { case name~":"~value => ParsedElement(stripQuotes(name),value) }
   }
   def zip: Parser[ParsedElement] = {
-    "\"zip\""~":"~value ^^ 	
-      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+    "\"zip\"" ~ ":" ~ numberValue ^^ 	
+      { case name~":"~value => ParsedElement(stripQuotes(name),value) }
   }
   def phoneNumbers: Parser[ParsedElement] = {
-	  "\"phone numbers\"" ~ ":" ~> arr ^^ {
+	  "\"phone numbers\"" ~ ":" ~> (stringValue | stringArray) ^^ {
 	  	case value => ParsedElement("phone numbers",value)}
   }
 
-    
+  def stringArray: Parser[JsonArray] = 
+    "["~> repsep(stringValue, ",") <~ "]" ^^ 
+       { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} }
   
+  def numberArray: Parser[JsonArray] = 
+    "["~> repsep(numberValue, ",") <~ "]" ^^ 
+       { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} }
+    
+  def stringValue: Parser[JsonPrimitive]  = stringLiteral ^^ { case str => new JsonPrimitive(stripQuotes(str)) } 
+
+  def numberValue: Parser[JsonPrimitive] = (wholeNumber | floatingPointNumber) ^^ { case numStr => new JsonPrimitive(new java.lang.Double(numStr)) }
+
+  // --------------------------------------------------------------------------
+  // Generic Json Parsing 
   def obj: Parser[JsonObject] = 
-    "{"~> repsep(member, ",") <~"}" ^^ 
+    "{" ~> repsep(member, ",") <~ "}" ^^ 
         { case member => member.foldLeft(new JsonObject){(r,e) => r.add(e._1, e._2); r} }
 
   def arr: Parser[JsonArray] =
-    "["~> repsep(value, ",") <~"]" ^^ 
+    "[" ~> repsep(value, ",") <~ "]" ^^ 
        { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} } 
   
   def member: Parser[(String, JsonElement)] = 
-    stringLiteral~":"~value ^^ 	// 
-      { case name~":"~value => (stripFirstAndLast(name),value) }
+    stringLiteral ~ ":" ~ value ^^ 
+      { case name~":"~value => (stripQuotes(name),value) }
   
   def value: Parser[JsonElement] = (
       obj
     | arr 
-    | stringLiteral ^^ { case str => new JsonPrimitive(stripFirstAndLast(str)) } 
+    | stringLiteral ^^ { case str => new JsonPrimitive(stripQuotes(str)) } 
     | floatingPointNumber ^^ { case fpStr => new JsonPrimitive(new java.lang.Double(fpStr)) } 
     | "null"  ^^ {case _ => new JsonNull} 
     | "true"  ^^ {case _ => new JsonPrimitive(new java.lang.Boolean(true))} 
@@ -86,5 +98,5 @@ class JSON4 extends JavaTokenParsers {
   ) // using '(' lets us use \n and avoid ';' for one statement
   
   // Strip first and last quotes from input string
-  def stripFirstAndLast(in: String): String = in.subSequence(1, in.length()-1).toString
+  def stripQuotes(in: String): String = in.subSequence(1, in.length()-1).toString
 }
