@@ -10,47 +10,55 @@ object FourthJsonParser extends JSON4 with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
-    println(parseAll(value, reader))
+    println(parseAll(addressBook, reader))
   } else { 
 	println("Usage: <file to parse>")
   }
   
   def consoleMain(args: Array[String]) {
      val reader = new FileReader(args(0))
-     println(parseAll(value, reader))
+     println(parseAll(addressBook, reader))
      
   }  
 }
 
+case class ParsedElement(name: String, element: JsonElement)
+
 class JSON4 extends JavaTokenParsers {   
-  
-  def addressBook: Parser[JsonObject] = (
-	name ~ "," ~ address ~ "," ~ phoneNumbers ^^ { 
+	
+  def addressBook: Parser[JsonObject] = {
+	"{"~> "\"address book\"" ~> ":" ~> "{"~> name ~ "," ~ address ~ "," ~ phoneNumbers <~ "}" <~ "}" ^^ { 
 	  case (name ~ "," ~ address ~ "," ~ phoneNumbers) => { 
-	    List(name,address,phoneNumbers).foldLeft(new JsonObject){(r,e) => 
-	      e.getAsJsonObject().entrySet.asScala.foreach(e => r.add(e.getKey,e.getValue))
-	      r
-	    }
+	    List(name,address,phoneNumbers).foldLeft(new JsonObject){(r,e) => r.add(e.name,e.element); r }
 	  }
 	}
-  )
-  
-  def name: Parser[JsonObject] = ( 
-	  member ^^ { 
-	    case member => val r = new JsonObject; r.add(member._1, member._2); r}
-  )
-  
-  def address: Parser[JsonObject] = (
-      member ~ "," ~ member ~ "," ~ member ^^ {
-        case (a~","~b~","~c) =>  List(a,b,c).foldLeft(new JsonObject){(r,e) => r.add(e._1, e._2); r }
+  }
+  def name: Parser[ParsedElement] = {
+    "\"name\""~":"~value ^^ 	// 
+      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }  
+  }
+  def address: Parser[ParsedElement] = {
+      "\"address\"" ~> ":" ~> "{" ~> street ~ "," ~ city ~ "," ~ zip <~ "}" ^^ {
+        case (a~","~b~","~c) =>  ParsedElement("address", 
+          List(a,b,c).foldLeft(new JsonObject){(r,e) => r.add(e.name, e.element); r})
       }
-  )
-  
-  
-  def phoneNumbers: Parser[JsonArray] = (
-	  "["~> repsep(floatingPointNumber,",") <~"]" ^^ {
-	  	case value => value.foldLeft(new JsonArray){(r,e) => r.add(new JsonPrimitive(new java.lang.Double(e))); r}}
-  )
+  }
+  def street: Parser[ParsedElement] = {
+    "\"street\""~":"~value ^^ 	
+      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+  }
+  def city: Parser[ParsedElement] = {
+    "\"city\""~":"~value ^^ 	
+      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+  }
+  def zip: Parser[ParsedElement] = {
+    "\"zip\""~":"~value ^^ 	
+      { case name~":"~value => ParsedElement(stripFirstAndLast(name),value) }
+  }
+  def phoneNumbers: Parser[ParsedElement] = {
+	  "\"phone numbers\"" ~ ":" ~> arr ^^ {
+	  	case value => ParsedElement("phone numbers",value)}
+  }
 
     
   
