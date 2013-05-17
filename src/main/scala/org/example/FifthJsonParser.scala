@@ -61,42 +61,21 @@ class JSON5 extends JavaTokenParsers {
 	  	case value => ParsedElement("phone numbers",value)}
   }
 
-  def stringArray: Parser[JsonArray] = 
+  def stringArray: Parser[JsonArray] = {
     "["~> repsep(stringValue, ",") <~ "]" ^^ 
        { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} }
+  }
   
-  def numberArray: Parser[JsonArray] = 
+  def numberArray: Parser[JsonArray] = {
     "["~> repsep(numberValue, ",") <~ "]" ^^ 
        { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} }
+  }
     
   def stringValue: Parser[JsonPrimitive]  = stringLiteral ^^ { case str => new JsonPrimitive(stripQuotes(str)) } 
 
   def numberValue: Parser[JsonPrimitive] = (wholeNumber | floatingPointNumber) ^^ { case numStr => new JsonPrimitive(new java.lang.Double(numStr)) }
-
-  // --------------------------------------------------------------------------
-  // Generic Json Parsing 
-  def obj: Parser[JsonObject] = 
-    "{" ~> repsep(member, ",") <~ "}" ^^ 
-        { case member => member.foldLeft(new JsonObject){(r,e) => r.add(e._1, e._2); r} }
-
-  def arr: Parser[JsonArray] =
-    "[" ~> repsep(value, ",") <~ "]" ^^ 
-       { case value => value.foldLeft(new JsonArray){(r,e) => r.add(e); r} } 
-  
-  def member: Parser[(String, JsonElement)] = 
-    stringLiteral ~ ":" ~ value ^^ 
-      { case name~":"~value => (stripQuotes(name),value) }
-  
-  def value: Parser[JsonElement] = (
-      obj
-    | arr 
-    | stringLiteral ^^ { case str => new JsonPrimitive(stripQuotes(str)) } 
-    | floatingPointNumber ^^ { case fpStr => new JsonPrimitive(new java.lang.Double(fpStr)) } 
-    | "null"  ^^ {case _ => new JsonNull} 
-    | "true"  ^^ {case _ => new JsonPrimitive(new java.lang.Boolean(true))} 
-    | "false" ^^ {case _ => new JsonPrimitive(new java.lang.Boolean(false))}
-  ) // using '(' lets us use \n and avoid ';' for one statement
   
   // Strip first and last quotes from input string
   def stripQuotes(in: String): String = in.subSequence(1, in.length()-1).toString
+  
 }
