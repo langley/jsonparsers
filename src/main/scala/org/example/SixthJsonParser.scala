@@ -10,14 +10,17 @@ object SixthJsonParser extends SixthJsonParser with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
-    println(parseAll(addressBookObject, reader))
+    parseAll(value, reader) match { 
+	  case fail: Failure => println("Found a failure: " + fail.msg)
+	  case ok => println("Was okay: " + ok)	  
+	}
   } else { 
 	println("Usage: <file to parse>")
   }
   
   def consoleMain(args: Array[String]) {
      val reader = new FileReader(args(0))
-     println(parseAll(addressBookObject, reader))
+     println(parseAll(value, reader))
      
   }  
 }
@@ -27,7 +30,7 @@ class SixthJsonParser extends JavaTokenParsers {
 
   case class ParsedElement(name: String, element: JsonElement)
   
-  def addressBookObject : Parser[JsonObject] = (
+  def value : Parser[JsonObject] = (
 		  ("{" ~> addressBook <~ "}" | failure("ugh")) 
   )
   

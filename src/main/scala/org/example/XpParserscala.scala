@@ -10,8 +10,8 @@ object XpParser extends XpParser with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
-	parseAll(value,reader) match { 
-	  case f: Failure => println("Found a failure: " + f.msg)
+	parseAll(value,reader) match {
+	  case fail: Failure => println("Found a failure: " + fail.msg)
 	  case ok => println("Was okay: " + ok)
 	}
   } else { 
