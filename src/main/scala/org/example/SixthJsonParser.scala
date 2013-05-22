@@ -6,7 +6,7 @@ import scala.util.parsing.combinator._
 import java.io.FileReader
 import com.google.gson._
 
-object FifthJsonParser extends FifthJsonParser with App {
+object SixthJsonParser extends SixthJsonParser with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
@@ -23,7 +23,7 @@ object FifthJsonParser extends FifthJsonParser with App {
 }
 
 
-class FifthJsonParser extends JavaTokenParsers {   
+class SixthJsonParser extends JavaTokenParsers {   
 
   case class ParsedElement(name: String, element: JsonElement)
   

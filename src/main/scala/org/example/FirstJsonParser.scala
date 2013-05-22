@@ -3,7 +3,15 @@ package org.example
 import scala.util.parsing.combinator._
 import java.io.FileReader
   
-object FirstJsonParser extends JSON1 {
+object FirstJsonParser extends FirstJsonParser with App {
+
+  if (args.size > 0 && args(0) != null) { 
+	val reader = new FileReader(args(0))
+    println(parseAll(value, reader))
+  } else { 
+	println("Usage: <file to parse>")
+  }  
+  
    // consoleMain lets us use sbt run for SecondJsonParser
    def consoleMain(args: Array[String]) {
      val reader = new FileReader(args(0))
@@ -11,7 +19,7 @@ object FirstJsonParser extends JSON1 {
    }
 }
   
-class JSON1 extends JavaTokenParsers {   
+class FirstJsonParser extends JavaTokenParsers {   
   
    def obj   : Parser[Any] = "{"~repsep(member, ",")~"}"
   

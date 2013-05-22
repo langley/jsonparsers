@@ -4,7 +4,7 @@ import scala.util.parsing.combinator._
 import java.io.FileReader
 import com.google.gson._
 
-object ThirdJsonParser extends JSON3 with App {
+object ThirdJsonParser extends ThirdJsonParser with App {
 
   if (args.size > 0 && args(0) != null) { 
 	val reader = new FileReader(args(0))
@@ -20,7 +20,7 @@ object ThirdJsonParser extends JSON3 with App {
   }  
 }
 
-class JSON3 extends JavaTokenParsers {   
+class ThirdJsonParser extends JavaTokenParsers {   
   def obj: Parser[JsonObject] = 
     "{"~> repsep(member, ",") <~"}" ^^ 
         { case member => member.foldLeft(new JsonObject){(r,e) => r.add(e._1, e._2); r} }
