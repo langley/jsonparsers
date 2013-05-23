@@ -8,3 +8,25 @@ It is a simple SBT project created using the following steps:
 
 Which allows us to use the "eclipse" command in sbt to create the
 eclipse project support. 
+
+FirstJsonParser.scala: is the first example from the url above
+SecondJsonParser.scala: is the second example from the url above
+ThirdJsonParser.scala: adds support for transforming the input json
+  into json objects defined by the google gson library. 
+FourthJsonParser.scala: moves the parser from generically parsing json
+  into one that is specifically looking for an address book and
+  finding it, transforms it into gson objects.
+FifthJsonParser.scala: was an attempt to add failure reporting.
+  However, even though it detects the error it doesn't report it. 
+SixthJsonParser.scala: shows what you need to do to report failures
+  and react to them. 
+XpParserscala.scala: is just a very simple parser used to eXperiment
+  with how to use failure() 
+addressBook.json: the canonical json
+a.json: basically the same as addrBook.json
+aFail.json: an address book that is valid json but not a valid address
+  book. 
+b.json: a simple json input for the XpParser
+bFail.json: a simple json input for the XpParser that will fail even
+  though it is valid json. 
+
