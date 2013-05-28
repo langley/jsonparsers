@@ -12,7 +12,9 @@ object JsonparsersBuild extends Build {
       version := "0.1-SNAPSHOT",
       scalaVersion := "2.10.1",
       // add other settings here
-	  libraryDependencies += "com.google.code.gson" % "gson" % "1.5"
+      libraryDependencies ++= Seq("com.google.code.gson" % "gson" % "1.5",
+	      "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"          
+      )	      
     )
   )
 }
