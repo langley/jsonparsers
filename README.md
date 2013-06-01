@@ -36,5 +36,10 @@ Data Files
 |a.json           | basically the same as addrBook.json                 |
 |aFail.json       | an address book that is valid json but not a valid  |
 |                 | address  book.                                      |
+|b.json           | a VERY simple json object                           |
+|bFail.json       | a VERY simple BROKEN json object, not valid json    |
+
+
+
 
 
