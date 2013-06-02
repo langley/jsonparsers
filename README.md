@@ -1,17 +1,19 @@
 What's Here
 ===========
-This project is exploring using Scala parser combinators to parse
-json. It started from code illustrated here: 
+This project shows how to build a "strict json parser" that insures
+the input is of the required type before transforming it to gson
+objects. It started from code illustrated here: 
      http://www.artima.com/pins1ed/combinator-parsing.html
-Each of the parsers included extends the basic example, see the table 
-which lists 
 
-It is a simple SBT project created using the following steps:
+Each of the parsers included extends the basic example, see the table 
+of Scala Files below which explains each step of the progression. 
+
+The project is a simple SBT project created using the following steps:
   1. g8 typesafehub/scala-sbt
   2. adding the project/plugins.sbt containing the eclipse plugin. 
 
-Which allows us to use the "eclipse" command in sbt to create the
-eclipse project support. 
+Note the eclipse plugin allows you to use the "eclipse" command in sbt
+to create the eclipse project support. 
 
 Scala Files
 -----------
@@ -33,8 +35,4 @@ Data Files
 |aFail.json       | an address book that is valid json but not a valid address  book. |
 |b.json           | a VERY simple json object                           |
 |bFail.json       | a VERY simple BROKEN json object, not valid json    |
-
-
-
-
 
