@@ -18,15 +18,15 @@ Scala Files
 |:---------------------:|:--------------------------------------------|
 |FirstJsonParser.scala  |This is the first example from the url above |
 |SecondJsonParser.scala |This is the second example from the url above|
-|ThirdJsonParser.scala  |Adds support for transforming the input json |
-|                       |into json objects defined by the google gson |
-|                       |library.                                     |
-|FourthJsonParser.scala |moves the parser from generically parsing    |
-|                       |json into one that is specifically looking   |
-|                       |for an address book and finding it,          |
-|                       |transforms it into gson objects.             |
-|FifthJsonParser.scala  |shows what you need to do to report failures |
-|                       |and react to them.                           |
+|ThirdJsonParser.scala  |Adds support for transforming the input json 
+                        into json objects defined by the google gson 
+                        library.                                      |                                     
+|FourthJsonParser.scala |moves the parser from generically parsing    
+                         json into one that is specifically looking   
+                         for an address book and finding it,          
+                         transforms it into gson objects.             |             
+|FifthJsonParser.scala  |shows what you need to do to report failures 
+                         and react to them.                           
 
 Data Files
 ----------
@@ -34,8 +34,8 @@ Data Files
 |:---------------:|:----------------------------------------------------|
 |addressBook.json | the canonical json                                  |
 |a.json           | basically the same as addrBook.json                 |
-|aFail.json       | an address book that is valid json but not a valid  |
-|                 | address  book.                                      |
+|aFail.json       | an address book that is valid json but not a valid  
+                    address  book.                                      |
 |b.json           | a VERY simple json object                           |
 |bFail.json       | a VERY simple BROKEN json object, not valid json    |
 
